@@ -28,6 +28,7 @@ function parseJwt(token) {
 window.onload = () => {
   const accessToken = getCookie("accessToken");
   const payload = parseJwt(accessToken);
+  console.log(payload)
   if (payload?.role === "admin") {
     document.getElementById("adminControls").style.display = "block";
   }
