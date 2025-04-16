@@ -1,7 +1,8 @@
 # 🎬 KinoTop
 
-**KinoTop** — bu kino va seriallarni ko‘rish, foydalanuvchilar ro‘yxatdan o‘tib fikr bildirishlari mumkin bo‘lgan web ilova. 
-Ushbu loyiha Node.js, Express, MongoDB va HTML/CSS (Bootstrap) texnologiyalari asosida yaratilgan.
+**KinoTop** — bu kino va seriallarni ko‘rish,
+ foydalanuvchilar ro‘yxatdan o‘tib fikr bildirishlari mumkin bo‘lgan web ilova. 
+
 
 
 ## 1. Funktsional talablar
@@ -9,8 +10,8 @@ Ushbu loyiha Node.js, Express, MongoDB va HTML/CSS (Bootstrap) texnologiyalari a
  - 🔐 Foydalanuvchi funksiyalari:
  - Foydalanuvchi ro'yxatdan o'tishi va tizimga kirishi (Login/Register)
  - Foydalanuvchi parolini unutsa, uni tiklash imkoniyati
- - Foydalanuvchi filmlarni ko‘rishi (ro‘yxat va bitta film sahifasi)
- - Foydalanuvchi filmlarni qidirishi (nom yoki janr bo‘yicha)
+ - Foydalanuvchi filmlarni ko‘rishi
+ - Foydalanuvchi filmlarni qidirishi 
  - Foydalanuvchi izoh yozishi va reyting qo‘yishi
 
 ## Film sahifasi:
@@ -57,7 +58,6 @@ Ushbu loyiha Node.js, Express, MongoDB va HTML/CSS (Bootstrap) texnologiyalari a
  - password	
  - role	
  - phoneNumber	
- - imageUrl	
  - createdAt	
  - updatedAt
 
