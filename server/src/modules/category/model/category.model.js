@@ -8,7 +8,7 @@ const CategoryShema = new mongoose.Schema(
       unique: true,
     },
 
-    film: [
+    films: [
       {
         type: mongoose.SchemaTypes.ObjectId,
         ref: "Film",
@@ -22,4 +22,4 @@ const CategoryShema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Category",CategoryShema)
+export default mongoose.model("Category", CategoryShema);

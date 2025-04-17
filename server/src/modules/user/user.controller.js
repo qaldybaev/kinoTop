@@ -1,4 +1,4 @@
-import UserService from "./user.servise.js";
+import UserService from "./user.service.js";
 
 class UserController {
   #_userService;
@@ -35,8 +35,18 @@ class UserController {
   };
   loginUser = async (req, res, next) => {
     try {
-      const data = await this.#_userService.login(req.body);
-      res.ststus(200).send(data);
+      const result = await this.#_userService.login(req.body);
+
+      res.cookie("accessToken", result.data.accessToken, {
+        maxAge: 2 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+      res.cookie("refreshToken", result.data.refreshToken, {
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+
+      res.status(200).send(result);
     } catch (error) {
       next(error);
     }

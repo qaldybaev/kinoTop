@@ -2,6 +2,13 @@ import { isValidObjectId } from "mongoose";
 import { BaseException } from "../../exception/base.exception.js";
 import userModel from "./model/user.model.js";
 import { compare, hash } from "bcrypt";
+import jwt from "jsonwebtoken";
+import {
+  ACCESS_TOKEN_EXPIRE_TIME,
+  ACCESS_TOKEN_SECRET,
+  REFRESH_TOKEN_EXPIRE_TIME,
+  REFRESH_TOKEN_SECRET,
+} from "../../config/jwt.config.js";
 
 class UserService {
   #_userModel;
@@ -56,20 +63,36 @@ class UserService {
     };
   };
   login = async ({ email, password }) => {
-    const foundedUser = await this.#_userModel.findOne({ email });
+    const user = await this.#_userModel.findOne({ email });
 
-    if (!foundedUser) {
+    if (!user) {
       throw new BaseException("Foydalanuvchi topilmadi", 404);
     }
-    const isMatch = await compare(password, foundedUser.password);
+    const isMatch = await compare(password, user.password);
 
     if (!isMatch) {
       throw new BaseException("Parol xato kiritildi!", 400);
     }
 
+    const accessToken = jwt.sign(
+      { id: user.id, role: user.role },
+      ACCESS_TOKEN_SECRET,
+      { expiresIn: ACCESS_TOKEN_EXPIRE_TIME }
+    );
+
+    const refreshToken = jwt.sign(
+      { id: user.id, role: user.role },
+      REFRESH_TOKEN_SECRET,
+      { expiresIn: REFRESH_TOKEN_EXPIRE_TIME }
+    );
+
     return {
       message: "Kirish muvaffaqiyatli ✅",
-      data: foundedUser,
+      data: {
+        user,
+        accessToken,
+        refreshToken,
+      },
     };
   };
 

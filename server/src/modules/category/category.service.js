@@ -9,7 +9,7 @@ class CategoryServise {
   }
 
   getAllCategorys = async () => {
-    const categorys = await this.#_categoryModel.find();
+    const categorys = await this.#_categoryModel.find().populate("films");
 
     return {
       message: "success✅",

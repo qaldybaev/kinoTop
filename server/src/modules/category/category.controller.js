@@ -1,4 +1,4 @@
-import categoryServise from "./category.servise.js";
+import categoryServise from "./category.service.js";
 
 class CategoryController {
   #_categoryServise;
