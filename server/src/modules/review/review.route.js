@@ -1,12 +1,21 @@
 import { Router } from "express";
 import reviewController from "./review.controller.js";
+import { ProtectedMiddleware } from "../../middleware/protectod.middleware.js";
 
 const reviewRouter = Router();
 
 reviewRouter
-  .get("/reviews", reviewController.getAllReview)
-  .post("/reviews", reviewController.createReview)
-  .patch("/reviews/:id",reviewController.updateReview)
-  .delete("/reviews/:id", reviewController.deleteReview);
+  .get("/reviews", ProtectedMiddleware(false), reviewController.getAllReview)
+  .post("/reviews", ProtectedMiddleware(false), reviewController.createReview)
+  .patch(
+    "/reviews/:id",
+    ProtectedMiddleware(false),
+    reviewController.updateReview
+  )
+  .delete(
+    "/reviews/:id",
+    ProtectedMiddleware(false),
+    reviewController.deleteReview
+  );
 
 export default reviewRouter;

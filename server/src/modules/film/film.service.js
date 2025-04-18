@@ -12,14 +12,19 @@ class FilmServise {
   }
 
   getAllFilm = async () => {
-    const films = await this.#_filmModel.find().populate("review");
-
+    const films = await this.#_filmModel.find()
+      .populate({
+        path: "review",
+        select: "comment rating userId createdAt",
+      });
+  
     return {
       message: "success✅",
       count: films.length,
       data: films,
     };
   };
+  
 
   createFilm = async ({
     title,

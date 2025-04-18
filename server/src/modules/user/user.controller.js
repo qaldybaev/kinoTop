@@ -45,7 +45,7 @@ class UserController {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
-
+      
       res.status(200).send(result);
     } catch (error) {
       next(error);

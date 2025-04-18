@@ -1,11 +1,16 @@
 import { Router } from "express";
 import saveController from "./save.controller.js";
+import { ProtectedMiddleware } from "../../middleware/protectod.middleware.js";
 
 const saveRouter = Router();
 
 saveRouter
-  .get("/save", saveController.getAllSaved)
-  .post("/save", saveController.saveFilm)
-  .delete("/save/:id", saveController.deleteSavedFilm);
+  .get("/save", ProtectedMiddleware(false), saveController.getAllSaved)
+  .post("/save", ProtectedMiddleware(false), saveController.saveFilm)
+  .delete(
+    "/save/:id",
+    ProtectedMiddleware(false),
+    saveController.deleteSavedFilm
+  );
 
 export default saveRouter;
