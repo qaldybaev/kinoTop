@@ -8,14 +8,18 @@ class SaveService {
     this.#_saveModel = saveModel;
   }
 
-  getAllSaved = async () => {
-    const saves = await this.#_saveModel.find().populate("userId filmId");
+  getAllSaved = async (userId) => {
+    const saves = await this.#_saveModel
+      .find({ userId }) 
+      .populate("filmId"); 
+      
     return {
-      message: "Saqlanganlar ro'yxati✅",
+      message: "Foydalanuvchining saqlagan filmlari✅",
       count: saves.length,
       data: saves,
     };
   };
+  
 
   saveFilm = async ({ userId, filmId }) => {
     const newsave = await this.#_saveModel.findOne({ userId, filmId });

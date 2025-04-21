@@ -40,12 +40,18 @@ class UserController {
       res.cookie("accessToken", result.data.accessToken, {
         maxAge: 2 * 60 * 60 * 1000,
         httpOnly: true,
+        sameSite: "Lax",
+        secure: false,
       });
+
       res.cookie("refreshToken", result.data.refreshToken, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
+        sameSite: "Lax",
+        secure: false,
       });
-      
+     
+
       res.status(200).send(result);
     } catch (error) {
       next(error);
@@ -67,6 +73,30 @@ class UserController {
       await this.#_userService.deleteUser(id);
 
       res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  forgotPassword = async (req, res, next) => {
+    try {
+      const response = await this.#_userService.forgotPassword(req.body);
+
+      res.status(200).json({
+        message: response.message,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  resetPassword = async (req, res, next) => {
+    try {
+      const response = await this.#_userService.resetPassword(req.body);
+
+      res.status(200).json({
+        message: response.message,
+      });
     } catch (error) {
       next(error);
     }

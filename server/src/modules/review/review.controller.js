@@ -6,15 +6,15 @@ class ReviewController {
     this.#_reviewService = reviewService;
   }
 
-  getAllReview = async (req, res, next) => {
+  getReviews = async (req, res, next) => {
     try {
-      const data = await this.#_reviewService.getAllReview();
-
-      res.status(200).send(data);
+      const result = await this.#_reviewService.getAllReview(req.query);
+      res.status(200).send(result);
     } catch (error) {
       next(error);
     }
   };
+  
 
   createReview = async (req, res, next) => {
     try {

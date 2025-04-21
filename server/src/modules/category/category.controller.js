@@ -8,6 +8,7 @@ class CategoryController {
 
   getAllCategory = async (req, res, next) => {
     try {
+  
       const data = await this.#_categoryServise.getAllCategorys();
       res.status(200).send(data);
     } catch (error) {

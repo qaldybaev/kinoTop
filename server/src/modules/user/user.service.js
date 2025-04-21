@@ -1,8 +1,10 @@
 import { isValidObjectId } from "mongoose";
 import { BaseException } from "../../exception/base.exception.js";
+import { sendMail } from "../../utils/mail.utils.js";
+import crypto from "node:crypto";
 import userModel from "./model/user.model.js";
+import jwt from "jsonwebtoken"
 import { compare, hash } from "bcrypt";
-import jwt from "jsonwebtoken";
 import {
   ACCESS_TOKEN_EXPIRE_TIME,
   ACCESS_TOKEN_SECRET,
@@ -74,14 +76,15 @@ class UserService {
       throw new BaseException("Parol xato kiritildi!", 400);
     }
 
+
     const accessToken = jwt.sign(
-      { id: user.id, role: user.role },
+      { user: user.id, role: user.role },
       ACCESS_TOKEN_SECRET,
       { expiresIn: ACCESS_TOKEN_EXPIRE_TIME }
     );
 
     const refreshToken = jwt.sign(
-      { id: user.id, role: user.role },
+      { user: user.id, role: user.role },
       REFRESH_TOKEN_SECRET,
       { expiresIn: REFRESH_TOKEN_EXPIRE_TIME }
     );
@@ -136,6 +139,59 @@ class UserService {
 
     await this.#_userModel.findOneAndDelete(id);
     return;
+  };
+
+  forgotPassword = async ({ email }) => {
+    const user = await this.#_userModel.findOne({ email });
+
+    if (!user) {
+      throw new BaseException("Foydalanuvchi topilmadi", 404);
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+    user.token = token;
+  
+    await user.save();
+
+    const resetLink = `http://localhost:4000/pages/reset-password.html?token=${token}`;
+
+    try {
+      await sendMail({
+        to: email,
+        subject: "Parolni tiklash",
+        html: `
+          <h2>Parolni tiklash uchun tugmani bosing</h2>
+          <a href="${resetLink}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">Reset Password</a>
+        `,
+      });
+    } catch (error) {
+      console.error("Email yuborishda xatolik:", error);
+      throw new BaseException("Email yuborilmadi. Iltimos keyinroq urinib ko‘ring", 500);
+    }
+
+    return {
+      message: "Parolni tiklash havolasi emailingizga yuborildi ✅",
+    };
+  };
+
+
+  resetPassword = async ({token, newPassword}) => {
+    const user = await this.#_userModel.findOne({ token });
+    console.log(token)
+
+    if (!user) {
+      throw new BaseException("Token noto‘g‘ri yoki eskirgan", 400);
+    }
+
+    const hashedPassword = await hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.token = undefined;
+
+    await user.save();
+
+    return {
+      message: "Parolingiz muvaffaqiyatli yangilandi ✅",
+    };
   };
 }
 

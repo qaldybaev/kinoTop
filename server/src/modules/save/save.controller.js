@@ -7,7 +7,8 @@ class SaveController {
   }
   getAllSaved = async (req, res, next) => {
     try {
-      const result = await this.#_saveServise.getAllSaved();
+      const userId = req.user.id
+      const result = await this.#_saveServise.getAllSaved(userId);
       res.status(200).json(result);
     } catch (err) {
       next(err);

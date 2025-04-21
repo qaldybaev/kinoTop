@@ -23,6 +23,11 @@ const ReviewShema = new mongoose.Schema(
       required: true,
       ref: "User",
     },
+    userName: {
+      type: mongoose.SchemaTypes.String,
+      required: true,
+    }
+    
   },
   {
     collection: "reviews",

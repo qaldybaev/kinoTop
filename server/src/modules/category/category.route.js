@@ -11,28 +11,33 @@ import { ROLES } from "../../constants/role.contant.js";
 
 const categoryRouter = Router();
 
-categoryRouter
-  .get(
-    "/categorys",
-    ProtectedMiddleware(false),
-    categoryController.getAllCategory
-  )
-  .post(
-    "/categorys",
-    ProtectedMiddleware(true),
-    ValidationMiddleware(createCategorySchema),
-    categoryController.createCategory
-  )
-  .put(
-    "/categorys/:id",
-    ProtectedMiddleware(true),
-    ValidationMiddleware(updateCategorySchema),
-    categoryController.updateCategory
-  )
-  .delete(
-    "/categorys/:id",
-    ProtectedMiddleware(true),
-    categoryController.deleteCategory
-  );
+categoryRouter.get(
+  "/categorys",
+  ProtectedMiddleware(true),
+  categoryController.getAllCategory
+);
+
+categoryRouter.post(
+  "/categorys",
+  ValidationMiddleware(createCategorySchema),
+  ProtectedMiddleware(true),
+  Roles([ROLES.ADMIN]),
+  categoryController.createCategory
+);
+
+categoryRouter.put(
+  "/categorys/:id",
+  ProtectedMiddleware(true),
+  Roles([ROLES.ADMIN]),
+  ValidationMiddleware(updateCategorySchema),
+  categoryController.updateCategory
+);
+
+categoryRouter.delete(
+  "/categorys/:id",
+  ProtectedMiddleware(true),
+  Roles([ROLES.ADMIN]),
+  categoryController.deleteCategory
+);
 
 export default categoryRouter;

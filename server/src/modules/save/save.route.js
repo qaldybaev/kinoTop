@@ -4,13 +4,14 @@ import { ProtectedMiddleware } from "../../middleware/protectod.middleware.js";
 
 const saveRouter = Router();
 
-saveRouter
-  .get("/save", ProtectedMiddleware(false), saveController.getAllSaved)
-  .post("/save", ProtectedMiddleware(false), saveController.saveFilm)
-  .delete(
-    "/save/:id",
-    ProtectedMiddleware(false),
-    saveController.deleteSavedFilm
-  );
+saveRouter.get("/save", ProtectedMiddleware(true), saveController.getAllSaved);
+
+saveRouter.post("/save", ProtectedMiddleware(true), saveController.saveFilm);
+
+saveRouter.delete(
+  "/save/:id",
+  ProtectedMiddleware(true),
+  saveController.deleteSavedFilm
+);
 
 export default saveRouter;

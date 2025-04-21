@@ -9,12 +9,10 @@ export const Roles = (...roles) => {
       return next();
     }
 
-    if (!roles.includes(userRole)) {
-      return next(
-        new BaseException("Sizga bu amalni bajarishga ruhsat yo'q", 403)
-      );
+    if (!roles.flat().includes(userRole)) {  
+      return next(new BaseException("Sizga bu amalni bajarishga ruhsat yo'q", 403));
     }
-
+    
     next();
   };
 };

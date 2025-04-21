@@ -17,11 +17,11 @@ const FilmShema = new mongoose.Schema(
     },
     imageUrl: {
       type: mongoose.SchemaTypes.String,
-      required: false,
+      required: true,
     },
     videoUrl: {
       type: mongoose.SchemaTypes.String,
-      required: false,
+      required: true,
     },
     category: {
       type: mongoose.SchemaTypes.ObjectId,
