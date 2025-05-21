@@ -7,20 +7,20 @@ const errorHandlerMiddleware = (error, req, res, next) => {
 
   if (error?.code === 11000) {
     return res.status(409).json({
-      status: "error❌",
+      status: "error",
       message: "Bu ma'lumot avvaldan mavjud",
     });
   }
 
   if (error.isException) {
     return res.status(error.statusCode).json({
-      status: "error❌",
+      status: "error",
       message: error.message,
     });
   }
 
   res.status(500).json({
-    status: "error❌",
+    status: "error",
     message: error.message || "Serverda xatolik yuz berdi",
   });
 };

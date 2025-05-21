@@ -1,0 +1,70 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #121212; /* Qora fon */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: #fff;
+}
+
+.form-container {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  text-align: center;
+}
+
+form div {
+  margin-bottom: 15px;
+}
+
+form label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #bbb;
+}
+
+form input,
+form select,
+form textarea {
+  width: 95%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  background-color: #222;
+  color: #fff;
+  transition: border 0.3s;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+  border-color: #00d9ff; /* Fokus holatida ko'k chegaralar */
+}
+
+form button {
+  background-color: #00d9ff;
+  color: white;
+  border: none;
+  padding: 12px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #00bcd4; 
+}
+
+#categoryMessage, #filmMessage {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #00d9ff; 
+}

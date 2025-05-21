@@ -43,6 +43,7 @@ class UserController {
         sameSite: "Lax",
         secure: false,
       });
+      console.log("token",req.cookie)
 
       res.cookie("refreshToken", result.data.refreshToken, {
         maxAge: 7 * 24 * 60 * 60 * 1000,

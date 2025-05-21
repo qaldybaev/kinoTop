@@ -31,10 +31,6 @@ const UserSchema = new mongoose.Schema(
       match:
         /^(9[012345789]|6[125679]|7[0123456789]|3[3]|8[8]|2[0]|5[05])[0-9]{7}$/,
     },
-    token: {
-      type: mongoose.SchemaTypes.String, 
-      default: null,
-    },
   },
   {
     collection: "users",

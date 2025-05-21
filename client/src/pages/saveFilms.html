@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saqlangan Filmlar</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container">
+  <h1 class="my-4">Saqlangan Filmlar</h1>
+
+  <div id="savedFilmsList">
+    <!-- Saqlangan filmlar shu yerda ko'rsatiladi -->
+    <ul id="savedFilms" class="list-group">
+      <!-- Dinamik ro'yxat bu yerda chiqadi -->
+    </ul>
+  </div>
+
+  <a href="/" class="btn btn-primary mt-3">Asosiy Sahifaga</a>
+</div>
+
+<script>
+  // Foydalanuvchining ID sini olish
+  const userId = 'userId_here'; // Hozirgi foydalanuvchining userId sini kiriting
+
+  // Saqlangan filmlar ro'yxatini olish
+  async function fetchSavedFilms() {
+    try {
+      const response = await fetch(`/api/saves/${userId}`);
+      const data = await response.json();
+
+      if (data.length > 0) {
+        const savedFilms = document.getElementById('savedFilms');
+        savedFilms.innerHTML = ''; // Avvalgi filmlar ro'yxatini tozalash
+
+        data.forEach(film => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item';
+          li.textContent = film.title; // Film nomini chiqarish
+          savedFilms.appendChild(li);
+        });
+      } else {
+        const savedFilms = document.getElementById('savedFilms');
+        savedFilms.innerHTML = '<li class="list-group-item">Hech qanday film saqlanmagan.</li>';
+      }
+    } catch (error) {
+      console.error('Xatolik:', error);
+    }
+  }
+
+  fetchSavedFilms();
+</script>
+
+</body>
+</html>
