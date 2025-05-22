@@ -44,7 +44,7 @@ app.use(errorHandlerMiddleware)
 
 app.all('/*splat', (req, res) => {
   res.send({
-    message: `Bunday ${req.url} url mavjud emas`
+    message: `Bunday ${req.url} url mavjud emas❌`
   })
 })
 
