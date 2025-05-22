@@ -18,11 +18,17 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Pull latest code & restart app on server
+    - name: Deploy server and client
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
           cd ${{ secrets.DEPLOY_PATH }}
           git pull origin main
-          npm i
-          pm2 restart test || pm2 start main.js --name test
+
+          cd client
+          npm install
+          npm run build
+
+          cd ../server
+          npm install
+          pm2 restart kinoTop || pm2 start src/main.js --name kinoTop
         EOF
