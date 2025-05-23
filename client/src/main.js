@@ -1,6 +1,6 @@
 import customAxios from "./config/axios.config.js";
 
-const SERVER_BASE_URL = process.env.VITE_SERVER_BASE_URL;
+const SERVER_BASE_URL = process.env.VITE_SERVER_BASE_URL || "http://178.128.85.205:3000/api"
 
 const categorySelect = document.querySelector("#categorySelect");
 const searchInput = document.querySelector("#searchInput");
