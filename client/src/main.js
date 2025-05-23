@@ -1,7 +1,6 @@
 import customAxios from "./config/axios.config.js";
 
 const SERVER_BASE_URL = process.env.VITE_SERVER_BASE_URL;
-console.log("PORT",process.env.VITE_SERVER_BASE_URL)
 
 const categorySelect = document.querySelector("#categorySelect");
 const searchInput = document.querySelector("#searchInput");
@@ -36,8 +35,9 @@ if (payload?.role === "admin") {
 async function getCategories() {
   try {
     const res = await customAxios.get("/categorys");
-    console.log("hvbljdfhvldfvhldfhvlhfd",res.data)
+    console.log("PORT",process.env.VITE_SERVER_BASE_URL)
     const categories = res.data.data;
+    console.log("hvbljdfhvldfvhldfhvlhfd",categories)
 
     categories.forEach((category) => {
       const option = document.createElement("option");
