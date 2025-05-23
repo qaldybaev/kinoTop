@@ -3,7 +3,7 @@ import { BaseException } from "../../exception/base.exception.js";
 import { sendMail } from "../../utils/mail.utils.js";
 import crypto from "node:crypto";
 import userModel from "./model/user.model.js";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 import { compare, hash } from "bcrypt";
 import {
   ACCESS_TOKEN_EXPIRE_TIME,
@@ -65,6 +65,7 @@ class UserService {
     };
   };
   login = async ({ email, password }) => {
+    console.log("login", email, password);
     const user = await this.#_userModel.findOne({ email });
 
     if (!user) {
@@ -75,7 +76,6 @@ class UserService {
     if (!isMatch) {
       throw new BaseException("Parol xato kiritildi!", 400);
     }
-
 
     const accessToken = jwt.sign(
       { user: user.id, role: user.role },
@@ -150,7 +150,6 @@ class UserService {
 
     const token = crypto.randomBytes(32).toString("hex");
     user.token = token;
-  
     await user.save();
 
     const resetLink = `http://localhost:4000/pages/reset-password.html?token=${token}`;
@@ -160,13 +159,16 @@ class UserService {
         to: email,
         subject: "Parolni tiklash",
         html: `
-          <h2>Parolni tiklash uchun tugmani bosing</h2>
-          <a href="${resetLink}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">Reset Password</a>
-        `,
+        <h2>Parolni tiklash uchun tugmani bosing</h2>
+        <a href="${resetLink}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">Reset Password</a>
+      `,
       });
     } catch (error) {
       console.error("Email yuborishda xatolik:", error);
-      throw new BaseException("Email yuborilmadi. Iltimos keyinroq urinib ko‘ring", 500);
+      throw new BaseException(
+        "Email yuborilmadi. Iltimos keyinroq urinib ko‘ring",
+        500
+      );
     }
 
     return {
@@ -174,10 +176,8 @@ class UserService {
     };
   };
 
-
-  resetPassword = async ({token, newPassword}) => {
+  resetPassword = async ({ token, newPassword }) => {
     const user = await this.#_userModel.findOne({ token });
-    console.log(token)
 
     if (!user) {
       throw new BaseException("Token noto‘g‘ri yoki eskirgan", 400);
@@ -194,5 +194,4 @@ class UserService {
     };
   };
 }
-
 export default new UserService();
