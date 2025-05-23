@@ -15,7 +15,7 @@ const commentForm = document.querySelector("#commentForm");
 const commentInput = document.querySelector("#commentInput");
 
 // .env fayldan server URL ni olamiz
-const SERVER_BASE_URL = process.env.VITE_SERVER_BASE_URL || "http://localhost:3000/api";
+const SERVER_BASE_URL = process.env.VITE_SERVER_BASE_URL;
 
 // JWT tokenni base64 dan dekodlash uchun yordamchi funksiya
 function parseJwt(token) {
