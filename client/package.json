@@ -13,7 +13,8 @@
     "@parcel/packager-raw-url": "^2.14.4",
     "@parcel/transformer-jsonld": "^2.14.4",
     "buffer": "^6.0.3",
-    "parcel": "^2.14.4"
+    "parcel": "^2.14.4",
+    "process": "^0.11.10"
   },
   "dependencies": {
     "axios": "^1.8.4",

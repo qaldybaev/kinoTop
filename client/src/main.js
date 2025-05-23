@@ -1,5 +1,7 @@
 import customAxios from "./config/axios.config.js";
 
+const SERVER_BASE_URL = process.env.VITE_SERVER_BASE_URL || "http://localhost:3000/api";
+
 const categorySelect = document.querySelector("#categorySelect");
 const searchInput = document.querySelector("#searchInput");
 const movieList = document.querySelector("#movieList");
@@ -9,7 +11,6 @@ const sortSelect = document.querySelector("#sortSelect");
 
 function getCookie(name) {
   const value = `; ${document.cookie}`;
-  console.log(document.cookie)
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop().split(";").shift();
 }
@@ -18,7 +19,6 @@ function parseJwt(token) {
   try {
     const base64Payload = token.split(".")[1];
     const payload = atob(base64Payload);
-    console.log(payload)
     return JSON.parse(payload);
   } catch (error) {
     return null;
@@ -27,17 +27,15 @@ function parseJwt(token) {
 
 const accessToken = getCookie("accessToken");
 const payload = parseJwt(accessToken);
-console.log(payload)
-
 
 if (payload?.role === "admin") {
-  console.log(payload.role)
   document.getElementById("adminControls").style.display = "block";
 }
 
 async function getCategories() {
   try {
     const res = await customAxios.get("/categorys");
+    console.log("hvbljdfhvldfvhldfhvlhfd",res.data)
     const categories = res.data.data;
 
     categories.forEach((category) => {
@@ -68,9 +66,10 @@ async function loadFilms(category = "", query = "", page = 1, sort = "title") {
       const film = films[0];
       const div = document.createElement("div");
       div.className = "movie";
+      div.setAttribute("data-film-id", film._id);
       div.innerHTML = `
         <a href="/pages/film.html?id=${film._id}">
-          <img src="http://localhost:3000/api${film.imageUrl}" alt="${film.title}" />
+          <img src="${SERVER_BASE_URL}${film.imageUrl}" alt="${film.title}" />
           <h3>${film.title}</h3>
         </a>
         <div class="movie-actions">
@@ -91,7 +90,7 @@ async function loadFilms(category = "", query = "", page = 1, sort = "title") {
         const div = document.createElement("div");
         div.className = "slide";
         div.innerHTML = `
-          <img src="http://localhost:3000/api${film.imageUrl}" alt="${film.title}" />
+          <img src="${SERVER_BASE_URL}${film.imageUrl}" alt="${film.title}" />
         `;
         slider.appendChild(div);
       });
@@ -111,9 +110,10 @@ async function loadFilms(category = "", query = "", page = 1, sort = "title") {
       films.forEach((film) => {
         const div = document.createElement("div");
         div.className = "movie";
+        div.setAttribute("data-film-id", film._id);
         div.innerHTML = `
           <a href="/pages/film.html?id=${film._id}">
-            <img src="http://localhost:3000/api${film.imageUrl}" alt="${film.title}" />
+            <img src="${SERVER_BASE_URL}${film.imageUrl}" alt="${film.title}" />
             <h3>${film.title}</h3>
           </a>
           <div class="movie-actions">
@@ -138,27 +138,26 @@ async function loadFilms(category = "", query = "", page = 1, sort = "title") {
   }
 }
 
-// async function toggleSave(filmId) {
-//   try {
-//     const res = await customAxios.post(`/films/${filmId}/save`, {
-//       userId: payload.id,
-//     });
-//     console.log(`Save qilindi: ${filmId}`, res.data);
+async function toggleSave(filmId) {
+  try {
+    const res = await customAxios.post(`/films/${filmId}/save`, {
+      userId: payload.id,
+    });
+    console.log(`Save qilindi: ${filmId}`, res.data);
 
-//     const film = document.querySelector(`.movie[data-film-id="${filmId}"]`);
-//     const saveBtn = film.querySelector(".save-btn i");
-//     if (res.data.saved) {
-//       saveBtn.classList.add("fa-bookmark");
-//       saveBtn.classList.remove("fa-bookmark-o");
-//     } else {
-//       saveBtn.classList.remove("fa-bookmark");
-//       saveBtn.classList.add("fa-bookmark-o");
-//     }
-//   } catch (error) {
-//     console.error("Save qilishda xatolik:", error);
-//   }
-// }
-// toggleSave()
+    const film = document.querySelector(`.movie[data-film-id="${filmId}"]`);
+    const saveBtn = film.querySelector(".save-btn i");
+    if (res.data.saved) {
+      saveBtn.classList.add("fa-bookmark");
+      saveBtn.classList.remove("fa-bookmark-o");
+    } else {
+      saveBtn.classList.remove("fa-bookmark");
+      saveBtn.classList.add("fa-bookmark-o");
+    }
+  } catch (error) {
+    console.error("Save qilishda xatolik:", error);
+  }
+}
 
 async function toggleLike(filmId) {
   try {
@@ -212,7 +211,7 @@ function updatePagination(totalPages, currentPage, category, query, sort) {
 
 categorySelect.addEventListener("change", (event) => {
   const category = event.target.value;
-  loadFilms(category);
+  loadFilms(category, searchInput.value.trim(), 1, sortSelect.value);
 });
 
 searchInput.addEventListener("input", () => {
@@ -225,6 +224,10 @@ searchInput.addEventListener("input", () => {
     document.getElementById("primerya").classList.add("hidden");
     loadFilms(categorySelect.value, query, 1, sortSelect.value);
   }
+});
+
+sortSelect.addEventListener("change", () => {
+  loadFilms(categorySelect.value, searchInput.value.trim(), 1, sortSelect.value);
 });
 
 getCategories();

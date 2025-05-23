@@ -1,7 +1,8 @@
 import axios from "axios"
+console.log("PORT",process.env.VITE_SERVER_BASE_URL)
 
 const customAxios = axios.create({
-    baseURL:process.env.SERVER_BASE_URL,
+    baseURL:process.env.VITE_SERVER_BASE_URL,
     withCredentials: true,
     timeout:10000
 })
