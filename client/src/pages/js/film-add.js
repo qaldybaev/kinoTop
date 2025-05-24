@@ -44,7 +44,7 @@ filmForm.addEventListener("submit", async (e) => {
   formData.append("videoUrl", video);
 
   try {
-    const res = await customAxios.post("/api/films", formData, {
+    const res = await customAxios.post("/films", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

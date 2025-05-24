@@ -40,7 +40,7 @@ function getCookie(name) {
 // Film ma'lumotlarini yuklash
 async function loadFilm() {
   try {
-    const res = await customAxios.get(`${SERVER_BASE_URL}/api/films/${filmId}`);
+    const res = await customAxios.get(`${SERVER_BASE_URL}/films/${filmId}`);
     const film = res.data.data;
 
     filmPoster.src = `${SERVER_BASE_URL}${film.imageUrl}`;
@@ -60,7 +60,7 @@ async function loadFilm() {
 // Izohlarni yuklash
 async function loadComments() {
   try {
-    const res = await customAxios.get(`${SERVER_BASE_URL}/api/reviews?filmId=${filmId}`);
+    const res = await customAxios.get(`${SERVER_BASE_URL}/reviews?filmId=${filmId}`);
     commentsList.innerHTML = "";
 
     if (res.data.data.length === 0) {
@@ -129,7 +129,7 @@ commentForm.addEventListener("submit", async (e) => {
   }
 
   try {
-    await customAxios.post(`${SERVER_BASE_URL}/api/reviews`, { comment: text, rating, filmId, userId });
+    await customAxios.post(`${SERVER_BASE_URL}/reviews`, { comment: text, rating, filmId, userId });
     commentInput.value = "";
     ratingInput.value = "";
     stars.forEach(s => s.classList.remove('selected'));

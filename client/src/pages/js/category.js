@@ -14,7 +14,7 @@ categoryForm.addEventListener("submit", async (e) => {
   }
 
   try {
-    const res = await customAxios.post("/api/categorys", { name });
+    const res = await customAxios.post("/categorys", { name });
 
     if (res.data) {
       categoryMessage.textContent = "Kategoriya muvaffaqiyatli qo‘shildi!";
