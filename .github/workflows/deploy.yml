@@ -21,14 +21,23 @@ jobs:
     - name: Deploy server and client
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          cd ${{ secrets.DEPLOY_PATH }}
-          git pull origin main
+        set -eux 
 
-          cd client
-          npm install
-          npm run build
+        cd ${{ secrets.DEPLOY_PATH }}
 
-          cd ../server
-          npm install
-          pm2 restart kinoTop || pm2 start src/main.js --name kinoTop
+        echo "Pulling latest changes"
+        git pull origin main
+
+        echo "Building client"
+        cd client
+        npm install
+        npm run build
+
+        echo "Building and restarting server"
+        cd ../server
+        npm install
+        pm2 restart kinoTop || pm2 start src/main.js --name kinoTop
+
+        echo "Deployment completed successfully"
         EOF
+
