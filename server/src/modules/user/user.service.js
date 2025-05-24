@@ -197,13 +197,9 @@ class UserService {
   };
    createSeedUser = async () => {
     try {
-      const existingUser = await this.#_userModel.findOne({ email: "admin@example.com" });
-
-      if (existingUser) {
-        console.log("Seed user allaqachon mavjud.");
-        return;
-      }
-
+      const existingUser = await this.#_userModel.findOne({ email: "nurkenqaldybaev2001@gmail.com" });
+      if (existingUser) return;
+      
       const passwordHash = await hash("123456", 10);
 
       const seedUser = await this.#_userModel.create({
