@@ -207,8 +207,8 @@ class UserService {
       const passwordHash = await hash("123456", 10);
 
       const seedUser = await this.#_userModel.create({
-        name: "Admin",
-        email: "Tom@gmail.com",
+        name: "Nurken",
+        email: "nurkenqaldybaev2001@gmail.com",
         password: passwordHash,
         phoneNumber: "931231223",
         role: ROLES.ADMIN,
