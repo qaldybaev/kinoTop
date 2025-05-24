@@ -45,10 +45,6 @@ export const ProtectedMiddleware = (isProtected) => {
 
         res.cookie("accessToken", newAccessToken, {
           maxAge: 1000 * 60 * 15,
-          httpOnly: false, // frontend JS o'qishi uchun
-          sameSite: "Lax",
-          secure: false, // HTTPS bo'lsa true qilinadi
-          path: "/",
         });
 
         res.cookie("refreshToken", newRefreshToken, {
@@ -58,7 +54,7 @@ export const ProtectedMiddleware = (isProtected) => {
 
         req.role = data.role;
         req.user = data.user;
-        console.log(req.role);
+        console.log(req.role)
 
         return next();
       } catch (err) {
