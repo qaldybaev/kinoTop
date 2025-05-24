@@ -210,7 +210,7 @@ class UserService {
         name: "Admin",
         email: "Tom@gmail.com",
         password: passwordHash,
-        phoneNumber: "1234567890",
+        phoneNumber: "931231223",
         role: ROLES.ADMIN,
       });
 
