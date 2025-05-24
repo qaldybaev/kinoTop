@@ -1,7 +1,7 @@
 import customAxios from "./config/axios.config.js";
 
 // Vite muhiti uchun to'g'ri URL olish
-const SERVER_BASE_URL = import.meta.env.VITE_SERVER_BASE_URL || "";
+const SERVER_BASE_URL = process.env.VITE_SERVER_BASE_URL;
 
 // DOM elementlarni olish
 const categorySelect = document.querySelector("#categorySelect");
