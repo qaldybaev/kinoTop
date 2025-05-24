@@ -22,7 +22,7 @@ app.use(cookieParser())
 app.use(cors({
   origin: (origin, callback) => {
     console.log("Requested origin:", origin);
-    if (origin === "http://178.128.85.205:4400") {
+    if (!origin || origin === "http://178.128.85.205:4400") {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
@@ -30,6 +30,7 @@ app.use(cors({
   },
   credentials: true
 }));
+
 
 
 if(process.env.NODE_ENV?.trim() === "development"){
