@@ -11,11 +11,13 @@ import {
   REFRESH_TOKEN_EXPIRE_TIME,
   REFRESH_TOKEN_SECRET,
 } from "../../config/jwt.config.js";
+import { ROLES } from "../../constants/role.contant.js";
 
 class UserService {
   #_userModel;
   constructor() {
     this.#_userModel = userModel;
+    this.createSeedUser();
   }
 
   getAllUsers = async () => {
@@ -192,6 +194,30 @@ class UserService {
     return {
       message: "Parolingiz muvaffaqiyatli yangilandi ✅",
     };
+  };
+   createSeedUser = async () => {
+    try {
+      const existingUser = await this.#_userModel.findOne({ email: "admin@example.com" });
+
+      if (existingUser) {
+        console.log("Seed user allaqachon mavjud.");
+        return;
+      }
+
+      const passwordHash = await hash("123456", 10);
+
+      const seedUser = await this.#_userModel.create({
+        name: "Admin",
+        email: "Tom@gmail.com",
+        password: passwordHash,
+        phoneNumber: "1234567890",
+        role: ROLES.ADMIN,
+      });
+
+      console.log("Seed user yaratildi:", seedUser.email);
+    } catch (error) {
+      console.error("Seed user yaratishda xatolik:", error);
+    }
   };
 }
 export default new UserService();
