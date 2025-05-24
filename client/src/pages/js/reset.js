@@ -26,7 +26,7 @@ form.addEventListener("submit", async (e) => {
   }
 
   try {
-    const res = await customAxios.post("/reset-password", {
+    const res = await customAxios.post("/api/reset-password", {
       token,
       newPassword: password,
     });

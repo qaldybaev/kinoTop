@@ -11,7 +11,7 @@ form.addEventListener("submit", async (e) => {
   const password = e.target.password.value;
 
   try {
-    const res = await customAxios.post("/users/register", {
+    const res = await customAxios.post("/api/users/register", {
       name,
       email,
       phoneNumber,

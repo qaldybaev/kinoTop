@@ -7,7 +7,7 @@ form.addEventListener("submit", async (e) => {
   const email = e.target.email.value;
 
   try {
-    const res = await customAxios.post("/forgot-password", { email });
+    const res = await customAxios.post("/api/forgot-password", { email });
     console.log(res)
     alert(res?.data?.message);
     form.reset();

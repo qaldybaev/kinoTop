@@ -6,7 +6,7 @@ const filmCategorySelect = document.querySelector("#filmCategory");
 
 async function loadCategories() {
   try {
-    const res = await customAxios.get("/categorys");
+    const res = await customAxios.get("/api/categorys");
     const categories = res.data.data;
 
     categories.forEach((cat) => {
@@ -44,7 +44,7 @@ filmForm.addEventListener("submit", async (e) => {
   formData.append("videoUrl", video);
 
   try {
-    const res = await customAxios.post("/films", formData, {
+    const res = await customAxios.post("/api/films", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

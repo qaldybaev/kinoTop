@@ -34,7 +34,7 @@ if (payload?.role === "admin") {
 
 async function getCategories() {
   try {
-    const res = await customAxios.get("/categorys");
+    const res = await customAxios.get("/api/categorys");
     console.log("PORT",process.env.VITE_SERVER_BASE_URL)
     const categories = res.data.data;
     console.log("hvbljdfhvldfvhldfhvlhfd",categories)
@@ -52,7 +52,7 @@ async function getCategories() {
 
 async function loadFilms(category = "", query = "", page = 1, sort = "title") {
   try {
-    const res = await customAxios.get("/films", {
+    const res = await customAxios.get("/api/films", {
       params: { category, query, page, sort },
     });
 
@@ -141,7 +141,7 @@ async function loadFilms(category = "", query = "", page = 1, sort = "title") {
 
 async function toggleSave(filmId) {
   try {
-    const res = await customAxios.post(`/films/${filmId}/save`, {
+    const res = await customAxios.post(`/api/films/${filmId}/save`, {
       userId: payload.id,
     });
     console.log(`Save qilindi: ${filmId}`, res.data);
@@ -162,7 +162,7 @@ async function toggleSave(filmId) {
 
 async function toggleLike(filmId) {
   try {
-    const res = await customAxios.post(`/like`, {
+    const res = await customAxios.post(`/api/like`, {
       userId: payload.id,
       filmId,
     });
