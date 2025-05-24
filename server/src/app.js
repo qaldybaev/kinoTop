@@ -30,7 +30,7 @@ if(process.env.NODE_ENV?.trim() === "development"){
   
 }
 
-app.use("/api/uploads", express.static(path.join(process.cwd(), "src/uploads")));
+app.use("/uploads", express.static(path.join(process.cwd(), "src/uploads")));
 
   
 app.use("/api", userRouter)

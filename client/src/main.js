@@ -1,6 +1,6 @@
 import customAxios from "./config/axios.config.js";
 
-const SERVER_BASE_URL = process.env.VITE_SERVER_BASE_URL || "http://178.128.85.205:3000/api"
+const SERVER_BASE_URL = process.env.VITE_SERVER_BASE_URL || "http://localhost:3000"
 
 const categorySelect = document.querySelector("#categorySelect");
 const searchInput = document.querySelector("#searchInput");
@@ -65,6 +65,7 @@ async function loadFilms(category = "", query = "", page = 1, sort = "title") {
 
     if (films.length === 1) {
       const film = films[0];
+      console.log("photo",film.imageUrl)
       const div = document.createElement("div");
       div.className = "movie";
       div.setAttribute("data-film-id", film._id);
