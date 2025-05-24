@@ -16,7 +16,7 @@ const app = express()
 app.use(cors({
   origin: (origin, callback) => {
     console.log("Requested origin:", origin);
-    if (!origin || origin === "http://178.128.85.205:4400") {
+    if (!origin || origin === "https://webhero.com.uz") {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
