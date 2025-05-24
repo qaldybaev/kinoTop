@@ -1,9 +1,7 @@
 import customAxios from "./config/axios.config.js";
 
-// Vite muhiti uchun to'g'ri URL olish
-const SERVER_BASE_URL = process.env.VITE_SERVER_BASE_URL;
+const SERVER_BASE_URL = process.env.VITE_SERVER_BASE_URL
 
-// DOM elementlarni olish
 const categorySelect = document.querySelector("#categorySelect");
 const searchInput = document.querySelector("#searchInput");
 const movieList = document.querySelector("#movieList");
@@ -11,49 +9,36 @@ const slider = document.querySelector("#slider");
 const pageButtonsContainer = document.querySelector("#pageButtons");
 const sortSelect = document.querySelector("#sortSelect");
 
-// Global o'zgaruvchilar
-let accessToken = null;
-let payload = null;
-
-// Cookie'dan qiymat olish funksiyasi
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop().split(";").shift();
-  return null;
 }
 
-// JWT tokenni decode qilish funksiyasi
 function parseJwt(token) {
   try {
     const base64Payload = token.split(".")[1];
-    const payloadString = atob(base64Payload);
-    return JSON.parse(payloadString);
+    const payload = atob(base64Payload);
+    return JSON.parse(payload);
   } catch (error) {
     return null;
   }
 }
 
-// Sahifa yuklanganda tokenni olib, admin bo'lsa panelni ko'rsatish
 window.onload = () => {
-  accessToken = getCookie("accessToken");
-  payload = parseJwt(accessToken);
-
+  const accessToken = getCookie("accessToken");
+  const payload = parseJwt(accessToken);
   if (payload?.role === "admin") {
     document.getElementById("adminControls").style.display = "block";
   }
-
-  // Kategoriyalarni yuklash va filmlarni ko'rsatishni boshlash
-  getCategories();
-  loadFilms();
 };
 
-// Kategoriyalarni serverdan olish va selectga qo'shish
+
 async function getCategories() {
   try {
     const res = await customAxios.get("/categorys");
     const categories = res.data.data;
-
+    console.log(categories)
     categories.forEach((category) => {
       const option = document.createElement("option");
       option.value = category._id;
@@ -65,7 +50,6 @@ async function getCategories() {
   }
 }
 
-// Filmlar ro'yxatini yuklash
 async function loadFilms(category = "", query = "", page = 1, sort = "title") {
   try {
     const res = await customAxios.get("/films", {
@@ -76,12 +60,12 @@ async function loadFilms(category = "", query = "", page = 1, sort = "title") {
     slider.innerHTML = "";
 
     const films = res.data.data || [];
-    const totalFilms = res.data.total || 0;
+    const totalFilms = res.data.total;
     const totalPages = Math.ceil(totalFilms / 8);
 
     if (films.length === 1) {
-      // Agar faqat bitta film bo'lsa
       const film = films[0];
+      console.log("photo",film.imageUrl)
       const div = document.createElement("div");
       div.className = "movie";
       div.setAttribute("data-film-id", film._id);
@@ -103,9 +87,7 @@ async function loadFilms(category = "", query = "", page = 1, sort = "title") {
       `;
       movieList.appendChild(div);
     } else {
-      // Oxirgi 3 ta film uchun slider yaratish
       const lastThree = films.slice(-3);
-
       lastThree.forEach((film) => {
         const div = document.createElement("div");
         div.className = "slide";
@@ -127,7 +109,6 @@ async function loadFilms(category = "", query = "", page = 1, sort = "title") {
         }, 4000);
       }
 
-      // Barcha filmlarni ro'yxatda ko'rsatish
       films.forEach((film) => {
         const div = document.createElement("div");
         div.className = "movie";
@@ -159,64 +140,49 @@ async function loadFilms(category = "", query = "", page = 1, sort = "title") {
   }
 }
 
-// Filmni "Saqlash" funksiyasi
 async function toggleSave(filmId) {
-  if (!payload) {
-    alert("Iltimos, avval tizimga kiring!");
-    return;
-  }
-
   try {
     const res = await customAxios.post(`/films/${filmId}/save`, {
       userId: payload.id,
     });
+    console.log(`Save qilindi: ${filmId}`, res.data);
 
     const film = document.querySelector(`.movie[data-film-id="${filmId}"]`);
-    if (!film) return;
-
-    const saveBtnIcon = film.querySelector(".save-btn i");
+    const saveBtn = film.querySelector(".save-btn i");
     if (res.data.saved) {
-      saveBtnIcon.classList.add("fa-bookmark");
-      saveBtnIcon.classList.remove("fa-bookmark-o"); // Sizning FontAwesome versiyangizga qarab o'zgartiring
+      saveBtn.classList.add("fa-bookmark");
+      saveBtn.classList.remove("fa-bookmark-o");
     } else {
-      saveBtnIcon.classList.remove("fa-bookmark");
-      saveBtnIcon.classList.add("fa-bookmark-o");
+      saveBtn.classList.remove("fa-bookmark");
+      saveBtn.classList.add("fa-bookmark-o");
     }
   } catch (error) {
     console.error("Save qilishda xatolik:", error);
   }
 }
 
-// Filmni "Like" qilish funksiyasi
 async function toggleLike(filmId) {
-  if (!payload) {
-    alert("Iltimos, avval tizimga kiring!");
-    return;
-  }
-
   try {
     const res = await customAxios.post(`/like`, {
       userId: payload.id,
       filmId,
     });
+    console.log(`Like qilindi: ${filmId}`, res.data);
 
     const film = document.querySelector(`.movie[data-film-id="${filmId}"]`);
-    if (!film) return;
-
-    const likeBtnIcon = film.querySelector(".like-btn i");
+    const likeBtn = film.querySelector(".like-btn i");
     if (res.data.liked) {
-      likeBtnIcon.classList.add("fa-thumbs-up");
-      likeBtnIcon.classList.remove("fa-thumbs-o-up"); // Sizning FontAwesome versiyangizga qarab o'zgartiring
+      likeBtn.classList.add("fa-thumbs-up");
+      likeBtn.classList.remove("fa-thumbs-o-up");
     } else {
-      likeBtnIcon.classList.remove("fa-thumbs-up");
-      likeBtnIcon.classList.add("fa-thumbs-o-up");
+      likeBtn.classList.remove("fa-thumbs-up");
+      likeBtn.classList.add("fa-thumbs-o-up");
     }
   } catch (error) {
     console.error("Like qilishda xatolik:", error);
   }
 }
 
-// Sahifalash tugmalarini yangilash
 function updatePagination(totalPages, currentPage, category, query, sort) {
   pageButtonsContainer.innerHTML = "";
 
@@ -245,7 +211,6 @@ function updatePagination(totalPages, currentPage, category, query, sort) {
   }
 }
 
-// Event listenerlar
 categorySelect.addEventListener("change", (event) => {
   const category = event.target.value;
   loadFilms(category, searchInput.value.trim(), 1, sortSelect.value);
@@ -263,4 +228,9 @@ searchInput.addEventListener("input", () => {
   }
 });
 
-sortSelect
+sortSelect.addEventListener("change", () => {
+  loadFilms(categorySelect.value, searchInput.value.trim(), 1, sortSelect.value);
+});
+
+getCategories();
+loadFilms();
