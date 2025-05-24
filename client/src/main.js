@@ -25,12 +25,14 @@ function parseJwt(token) {
   }
 }
 
-const accessToken = getCookie("accessToken");
-const payload = parseJwt(accessToken);
+window.onload = () => {
+  const accessToken = getCookie("accessToken");
+  const payload = parseJwt(accessToken);
+  if (payload?.role === "admin") {
+    document.getElementById("adminControls").style.display = "block";
+  }
+};
 
-if (payload?.role === "admin") {
-  document.getElementById("adminControls").style.display = "block";
-}
 
 async function getCategories() {
   try {
