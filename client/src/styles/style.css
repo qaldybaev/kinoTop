@@ -1,4 +1,4 @@
-/* Reset & asosiy stil */
+/* Reset va umumiy sozlamalar */
 * {
   margin: 0;
   padding: 0;
@@ -8,36 +8,33 @@
 
 body {
   background-color: #121212;
-  color: #ffffff;
+  color: #fff;
   line-height: 1.6;
 }
 
-/* Navbar */
+/* Header (Navbar) */
 header {
   background-color: #1f1f1f;
-  padding: 20px 30px;
+  padding: 15px 30px;
 }
 
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
 
-.logo img{
-  width: 300px;
-  height: 70px;
-  margin-left: 30px;
+.logo img {
+  width: 180px;
+  height: auto;
 }
 
 nav ul {
   list-style: none;
   display: flex;
   gap: 20px;
-}
-
-nav ul li {
-  position: relative;
+  align-items: center;
 }
 
 nav ul li a {
@@ -50,90 +47,37 @@ nav ul li a {
 nav ul li a:hover {
   color: #4caf50;
 }
-#categorySelect{
-  padding: 5px;
-  border-radius: 5px;
-  background-color: transparent;
-  color: #fff;
-  font-weight: bold;
+
+#categorySelect {
+  padding: 6px 10px;
   border: none;
-}
-#categorySelect option{
-  background-color:#161d25;
-  color: #ffffff;
+  border-radius: 6px;
+  background-color: transparent;
+  color: white;
   font-weight: bold;
 }
 
-/* 🎞️ Primerya Slayder */
-#primerya {
-  padding: 40px 30px;
-  background-color: #1a1a1a;
-  display: block;
+#categorySelect option {
+  background-color: #1f2a38;
+  color: white;
 }
 
-#primerya h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 28px;
-  color: #f39c12;
-}
-
-.slider-container {
-  width: 100%;
-  max-width: 95%;
-  margin: 0 auto;
-  overflow: hidden;
-  border-radius: 10px;
-  position: relative;
-  height: 400px; 
-}
-
-.slider {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.5s ease-in-out;
-}
-
-.slide {
-  flex: 0 0 100%;
-  height: 100%;
-}
-
-.slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: opacity 0.5s ease-in-out; 
-}
-
-/* Qidiruvni amalga oshirganingizda yashirish */
-#primerya.hidden {
-  display: none;
-}
-
+/* Qidiruv va admin panel */
 #searchArea {
+  background-color: #1f2a38;
+  padding: 20px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 30px;
-  background-color: #1f2a38;
   flex-wrap: wrap;
-  gap: 20px;
-}
-
-/* Auth links - chapda */
-.auth-links {
-  display: flex;
-  gap: 10px;
+  gap: 15px;
 }
 
 .auth-links a {
-  padding: 10px 14px;
   background-color: #333;
   color: white;
   text-decoration: none;
+  padding: 10px 16px;
   border-radius: 6px;
   transition: background-color 0.3s;
 }
@@ -142,37 +86,21 @@ nav ul li a:hover {
   background-color: #555;
 }
 
-/* Search input - markazda */
 #search {
-  display: flex;
-  gap: 10px;
   flex-grow: 1;
+  display: flex;
   justify-content: center;
+  gap: 10px;
 }
 
 #searchInput {
-  padding: 10px;
   width: 70%;
+  padding: 10px;
   border-radius: 6px;
   border: none;
   font-size: 16px;
 }
 
-#searchBtn {
-  padding: 10px 16px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#searchBtn:hover {
-  background-color: #45a049;
-}
-
-/* Admin control - o‘ngda */
 #adminControls {
   display: flex;
   gap: 10px;
@@ -185,61 +113,88 @@ nav ul li a:hover {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
 
 #adminControls button:hover {
   background-color: #555;
 }
 
-/* Responsiv dizayn */
-@media (max-width: 768px) {
-  #searchArea {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .auth-links,
-  #adminControls,
-  #search {
-    justify-content: center;
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  #searchInput {
-    width: 100%;
-  }
-
-  .auth-links a,
-  #adminControls button {
-    width: 100%;
-    text-align: center;
-  }
+/* Premyeralar */
+#primerya {
+  background-color: #1a1a1a;
+  padding: 40px 30px;
 }
 
-/* Movies section */
+#primerya h2 {
+  text-align: center;
+  color: #f39c12;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.slider-container {
+  overflow: hidden;
+  width: 100%;
+  max-width: 95%;
+  margin: auto;
+  border-radius: 10px;
+  height: 400px;
+}
+
+.slider {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  height: 100%;
+}
+
+.slide {
+  flex: 0 0 100%;
+  height: 100%;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Sort drop-down */
+#sortArea {
+  padding: 20px 30px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#sortSelect {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #1f2a38;
+  color: white;
+  border: none;
+}
+
+/* Filmlar bo‘limi */
 #movies {
   padding: 40px 30px;
 }
 
 #movies h2 {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 28px;
   color: #4caf50;
+  font-size: 28px;
+  margin-bottom: 20px;
 }
 
 #movieList {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 30px;
-  padding: 40px;
   background-color: #161d25;
+  padding: 40px 20px;
 }
 
 .movie {
-  background: #1f2a38;
+  background-color: #1f2a38;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
@@ -262,107 +217,92 @@ nav ul li a:hover {
 
 .movie-info {
   padding: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: center;
+  text-align: center;
 }
 
 .movie h3 {
-  font-size: 16px;
-  color: #ffffff;
-  margin: 20px 0;
+  font-size: 18px;
+  color: white;
+  margin: 10px 0;
 }
 
 .movie p {
   font-size: 14px;
-  color: #cfcfcf;
-  margin: 0;
-  line-height: 1.4;
+  color: #ccc;
 }
 
-/* Film nomi linklari uchun to‘liq stil */
+/* Movie links */
 .movie a {
-  display: inline-block;
-  color: #ffffff;
+  color: white;
   text-decoration: none;
-  padding: 0 10px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 18px;
-  width: 100%;
+  font-weight: bold;
+  transition: color 0.3s;
 }
 
 .movie a:hover {
   color: #4caf50;
 }
 
+/* Pagination */
+#pagination {
+  padding: 20px;
+  text-align: center;
+}
+
 #pageButtons {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  gap: 8px;
 }
 
 #pageButtons button {
-  margin: 0 5px;
-  padding: 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  cursor: pointer;
-}
-
-#pageButtons button.active {
-  background-color: #007bff;
+  padding: 10px 14px;
+  background-color: #333;
+  border: none;
+  border-radius: 6px;
   color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 #pageButtons button:hover {
-  background-color: #0056b3;
-  color: white;
-}
-/* Movie Actions */
-/* Movie Actions */
-.movie-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px;
+  background-color: #555;
 }
 
-.icon-container {
-  display: flex;
-  justify-content: space-evenly;
-  width: 100px;
+#pageButtons button.active {
+  background-color: #4caf50;
 }
 
-.save-btn,
-.like-btn {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 24px;
-  color: #4caf50;
-  transition: color 0.3s;
-}
+/* Responsiv dizayn */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+  }
 
-.save-btn:hover,
-.like-btn:hover {
-  color: #45a049;
-}
+  nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 
-.save-btn:active,
-.like-btn:active {
-  color: #388e3c;
-}
+  #searchArea {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-.save-btn i,
-.like-btn i {
-  font-size: 28px;
-}
-#sortSelect{
-  padding: 10px;
-  border-radius: 5px;
-  background-color: #1b2a3b;
-  color: #fff;
-  font-weight: bold;
+  #searchInput {
+    width: 100%;
+  }
+
+  .auth-links,
+  #adminControls {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .auth-links a,
+  #adminControls button {
+    width: 100%;
+    text-align: center;
+  }
 }
