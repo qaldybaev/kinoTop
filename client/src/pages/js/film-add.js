@@ -6,7 +6,7 @@ const filmCategorySelect = document.querySelector("#filmCategory");
 
 async function loadCategories() {
   try {
-    const res = await customAxios.get("/api/categorys");
+    const res = await customAxios.get("/categorys");
     const categories = res.data.data;
 
     categories.forEach((cat) => {
