@@ -35,10 +35,8 @@ if (payload?.role === "admin") {
 async function getCategories() {
   try {
     const res = await customAxios.get("/categorys");
-    console.log("PORT",process.env.VITE_SERVER_BASE_URL)
     const categories = res.data.data;
-    console.log("hvbljdfhvldfvhldfhvlhfd",categories)
-
+    console.log(categories)
     categories.forEach((category) => {
       const option = document.createElement("option");
       option.value = category._id;
