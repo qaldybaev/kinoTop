@@ -17,13 +17,20 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
-const corsOptions = {
-  origin: "http://178.128.85.205:4400", 
-  credentials: true, 
-};
 
 
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: (origin, callback) => {
+    console.log("Requested origin:", origin);
+    if (origin === "http://178.128.85.205:4400") {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
+
 
 if(process.env.NODE_ENV?.trim() === "development"){
   app.use(morgan("tiny"));
