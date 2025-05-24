@@ -13,12 +13,6 @@ import morgan from "morgan"
 
 const app = express()
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(cookieParser())
-
-
-
 app.use(cors({
   origin: (origin, callback) => {
     console.log("Requested origin:", origin);
@@ -31,7 +25,9 @@ app.use(cors({
   credentials: true
 }));
 
-
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 
 if(process.env.NODE_ENV?.trim() === "development"){
   app.use(morgan("tiny"));
