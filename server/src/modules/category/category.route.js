@@ -13,7 +13,7 @@ const categoryRouter = Router();
 
 categoryRouter.get(
   "/categorys",
-  ProtectedMiddleware(true),Roles(ROLES.ALL),
+  ProtectedMiddleware(false),Roles(ROLES.ALL),
   categoryController.getAllCategory
 );
 
