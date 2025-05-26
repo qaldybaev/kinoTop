@@ -1,6 +1,6 @@
 import customAxios from "./config/axios.config.js";
 
-const SERVER_BASE_URL = process.env.VITE_SERVER_BASE_URL
+const SERVER_BASE_URL = process.env.VITE_SERVER_BASE_URL;
 
 const categorySelect = document.querySelector("#categorySelect");
 const searchInput = document.querySelector("#searchInput");
@@ -9,37 +9,43 @@ const slider = document.querySelector("#slider");
 const pageButtonsContainer = document.querySelector("#pageButtons");
 const sortSelect = document.querySelector("#sortSelect");
 
+let payload = null;
+
+// Cookie dan accessToken ni olish
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop().split(";").shift();
 }
 
+// JWT tokenni dekodlash
 function parseJwt(token) {
   try {
+    console.log("token",token)
     const base64Payload = token.split(".")[1];
-    const payload = atob(base64Payload);
+    payload = atob(base64Payload);
+    console.log("payload",payload)
     return JSON.parse(payload);
   } catch (error) {
     return null;
   }
 }
 
+// Sahifa yuklanganda ishlaydi
 window.onload = () => {
   const accessToken = getCookie("accessToken");
-  const payload = parseJwt(accessToken);
+  payload = parseJwt(accessToken);
   console.log(payload)
   if (payload?.role === "admin") {
     document.getElementById("adminControls").style.display = "block";
   }
 };
 
-
+// Kategoriyalarni olish
 async function getCategories() {
   try {
     const res = await customAxios.get("/categorys");
     const categories = res.data.data;
-    console.log(categories)
     categories.forEach((category) => {
       const option = document.createElement("option");
       option.value = category._id;
@@ -51,6 +57,7 @@ async function getCategories() {
   }
 }
 
+// Filmlarni yuklash
 async function loadFilms(category = "", query = "", page = 1, sort = "title") {
   try {
     const res = await customAxios.get("/films", {
@@ -66,26 +73,10 @@ async function loadFilms(category = "", query = "", page = 1, sort = "title") {
 
     if (films.length === 1) {
       const film = films[0];
-      console.log("photo",film.imageUrl)
       const div = document.createElement("div");
       div.className = "movie";
       div.setAttribute("data-film-id", film._id);
-      div.innerHTML = `
-        <a href="/pages/film.html?id=${film._id}">
-          <img src="${SERVER_BASE_URL}${film.imageUrl}" alt="${film.title}" />
-          <h3>${film.title}</h3>
-        </a>
-        <div class="movie-actions">
-          <div class="icon-container">
-            <button class="save-btn" onclick="toggleSave('${film._id}')">
-              <i class="fas fa-bookmark"></i>
-            </button>
-            <button class="like-btn" onclick="toggleLike('${film._id}')">
-              <i class="fas fa-thumbs-up"></i>
-            </button>
-          </div>
-        </div>
-      `;
+      div.innerHTML = createFilmCard(film);
       movieList.appendChild(div);
     } else {
       const lastThree = films.slice(-3);
@@ -114,22 +105,7 @@ async function loadFilms(category = "", query = "", page = 1, sort = "title") {
         const div = document.createElement("div");
         div.className = "movie";
         div.setAttribute("data-film-id", film._id);
-        div.innerHTML = `
-          <a href="/pages/film.html?id=${film._id}">
-            <img src="${SERVER_BASE_URL}${film.imageUrl}" alt="${film.title}" />
-            <h3>${film.title}</h3>
-          </a>
-          <div class="movie-actions">
-            <div class="icon-container">
-              <button class="save-btn" onclick="toggleSave('${film._id}')">
-                <i class="fas fa-bookmark"></i>
-              </button>
-              <button class="like-btn" onclick="toggleLike('${film._id}')">
-                <i class="fas fa-thumbs-up"></i>
-              </button>
-            </div>
-          </div>
-        `;
+        div.innerHTML = createFilmCard(film);
         movieList.appendChild(div);
       });
     }
@@ -141,12 +117,32 @@ async function loadFilms(category = "", query = "", page = 1, sort = "title") {
   }
 }
 
+// Film kartasini HTML shaklida qaytarish
+function createFilmCard(film) {
+  return `
+    <a href="/pages/film.html?id=${film._id}">
+      <img src="${SERVER_BASE_URL}${film.imageUrl}" alt="${film.title}" />
+      <h3>${film.title}</h3>
+    </a>
+    <div class="movie-actions">
+      <div class="icon-container">
+        <button class="save-btn" onclick="toggleSave('${film._id}')">
+          <i class="fas fa-bookmark"></i>
+        </button>
+        <button class="like-btn" onclick="toggleLike('${film._id}')">
+          <i class="fas fa-thumbs-up"></i>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// Save funksiyasi
 async function toggleSave(filmId) {
   try {
     const res = await customAxios.post(`/films/${filmId}/save`, {
       userId: payload.id,
     });
-    console.log(`Save qilindi: ${filmId}`, res.data);
 
     const film = document.querySelector(`.movie[data-film-id="${filmId}"]`);
     const saveBtn = film.querySelector(".save-btn i");
@@ -162,13 +158,13 @@ async function toggleSave(filmId) {
   }
 }
 
+// Like funksiyasi
 async function toggleLike(filmId) {
   try {
     const res = await customAxios.post(`/like`, {
       userId: payload.id,
       filmId,
     });
-    console.log(`Like qilindi: ${filmId}`, res.data);
 
     const film = document.querySelector(`.movie[data-film-id="${filmId}"]`);
     const likeBtn = film.querySelector(".like-btn i");
@@ -184,6 +180,7 @@ async function toggleLike(filmId) {
   }
 }
 
+// Pagination tugmalarini yaratish
 function updatePagination(totalPages, currentPage, category, query, sort) {
   pageButtonsContainer.innerHTML = "";
 
@@ -212,26 +209,30 @@ function updatePagination(totalPages, currentPage, category, query, sort) {
   }
 }
 
+// Kategoriya o‘zgarganda
 categorySelect.addEventListener("change", (event) => {
   const category = event.target.value;
   loadFilms(category, searchInput.value.trim(), 1, sortSelect.value);
 });
 
+// Qidiruv inputi
 searchInput.addEventListener("input", () => {
   const query = searchInput.value.trim();
 
   if (query === "") {
     document.getElementById("primerya").classList.remove("hidden");
-    loadFilms(categorySelect.value, query, 1, sortSelect.value);
   } else {
     document.getElementById("primerya").classList.add("hidden");
-    loadFilms(categorySelect.value, query, 1, sortSelect.value);
   }
+
+  loadFilms(categorySelect.value, query, 1, sortSelect.value);
 });
 
+// Saralash tanlanganda
 sortSelect.addEventListener("change", () => {
   loadFilms(categorySelect.value, searchInput.value.trim(), 1, sortSelect.value);
 });
 
+// Boshlang‘ich yuklash
 getCategories();
 loadFilms();
