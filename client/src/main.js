@@ -25,6 +25,7 @@ function parseJwt(token) {
     return null;
   }
 }
+console.log('cookie',document.cookie);
 
 document.addEventListener("DOMContentLoaded", () => {
   const accessToken = getCookie("accessToken");
