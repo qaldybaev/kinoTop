@@ -25,9 +25,9 @@ function parseJwt(token) {
     return null;
   }
 }
-console.log('cookie',document.cookie);
 
 document.addEventListener("DOMContentLoaded", () => {
+  console.log('cookie',document.cookie);
   const accessToken = getCookie("accessToken");
   if (!accessToken) {
     console.log("Token topilmadi");
