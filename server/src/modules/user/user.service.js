@@ -35,48 +35,44 @@ class UserService {
     }
     const user = await this.#_userModel.findById(id);
     if (!user) {
-      throw new BaseException(`ID: ${id} boyicha malumot topilmadi`, 404);
+      throw new BaseException(`ID: ${id} bo‘yicha ma’lumot topilmadi`, 404);
     }
     return {
       message: "success✅",
       data: user,
     };
   };
-  register = async ({ name, email, password, phoneNumber }) => {
-    const foundedUser = await this.#_userModel.findOne({ email });
 
-    if (foundedUser) {
-      throw new BaseException(
-        "Bu email bilan allaqachon royxattan o'tilgan!",
-        400
-      );
+  register = async ({ name, email, password, phoneNumber }) => {
+    const foundUser = await this.#_userModel.findOne({ email });
+    if (foundUser) {
+      throw new BaseException("Bu email bilan allaqachon ro‘yxatdan o‘tildi!", 400);
     }
 
     const passwordHash = await hash(password, 10);
-
     const newUser = await this.#_userModel.create({
       name,
       email,
       password: passwordHash,
       phoneNumber,
+      role: ROLES.USER,
     });
 
     return {
-      message: "Ro'yxatdan muvaffaqiyatli o'tildi ✅",
+      message: "Ro‘yxatdan muvaffaqiyatli o‘tildi ✅",
       data: newUser,
     };
   };
-  login = async ({ email, password }) => {
-    console.log("login", email, password);
-    const user = await this.#_userModel.findOne({ email });
 
+  login = async ({ email, password }) => {
+    const user = await this.#_userModel.findOne({ email });
     if (!user) {
       throw new BaseException("Foydalanuvchi topilmadi", 404);
     }
-    const isMatch = await compare(password, user.password);
 
+    const isMatch = await compare(password, user.password);
     if (!isMatch) {
-      throw new BaseException("Parol xato kiritildi!", 400);
+      throw new BaseException("Parol noto‘g‘ri kiritildi!", 400);
     }
 
     const accessToken = jwt.sign(
@@ -91,129 +87,156 @@ class UserService {
       { expiresIn: REFRESH_TOKEN_EXPIRE_TIME }
     );
 
-    return {
-      message: "Kirish muvaffaqiyatli ✅",
-      data: {
-        user,
-        accessToken,
-        refreshToken,
-      },
-    };
+    // Refresh tokenni DBda saqlash (optional, xavfsizlik uchun)
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    return { user, accessToken, refreshToken };
   };
 
-  updateUser = async (id, { name, email, password, phoneNumber }) => {
-    if (!isValidObjectId(id)) {
-      throw new BaseException(`ID: ${id} noto'g'ri formatta kiritildi!`, 400);
-    }
-    const user = await this.#_userModel.findById(id);
-    if (!user) {
-      throw new BaseException(`ID: ${id} boyicha malumot topilmadi`, 404);
-    }
+  refreshToken = async (token) => {
+    try {
+      if (!token) throw new BaseException("Token topilmadi", 401);
 
-    let newUpdateUser = { name, email, phoneNumber };
+      // Tokenni tekshirish
+      const decoded = jwt.verify(token, REFRESH_TOKEN_SECRET);
 
-    if (password) {
-      const passwordHash = await hash(password, 10);
-      newUpdateUser.password = passwordHash;
-    }
-
-    const updateUser = await this.#_userModel.findByIdAndUpdate(
-      id,
-      newUpdateUser,
-      {
-        new: true,
+      // Foydalanuvchini topish va token tekshirish
+      const user = await this.#_userModel.findById(decoded.user);
+      if (!user) {
+        throw new BaseException("Foydalanuvchi topilmadi", 404);
       }
-    );
+
+      if (user.refreshToken !== token) {
+        throw new BaseException("Refresh token noto‘g‘ri", 403);
+      }
+
+      // Yangi access va refresh token yaratish
+      const newAccessToken = jwt.sign(
+        { user: user.id, role: user.role },
+        ACCESS_TOKEN_SECRET,
+        { expiresIn: ACCESS_TOKEN_EXPIRE_TIME }
+      );
+      const newRefreshToken = jwt.sign(
+        { user: user.id, role: user.role },
+        REFRESH_TOKEN_SECRET,
+        { expiresIn: REFRESH_TOKEN_EXPIRE_TIME }
+      );
+
+      // DBdagi tokenni yangilash
+      user.refreshToken = newRefreshToken;
+      await user.save();
+
+      return {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      };
+    } catch (error) {
+      if (error.name === "TokenExpiredError") {
+        throw new BaseException("Token muddati tugagan", 401);
+      }
+      throw new BaseException(error.message, 401);
+    }
+  };
+
+  updateUser = async (id, data) => {
+    if (!isValidObjectId(id)) {
+      throw new BaseException(`ID: ${id} noto‘g‘ri kiritildi!`);
+    }
+
+    if (data.password) {
+      data.password = await hash(data.password, 10);
+    }
+
+    const updatedUser = await this.#_userModel.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedUser) {
+      throw new BaseException(`ID: ${id} bo‘yicha foydalanuvchi topilmadi`, 404);
+    }
+
     return {
-      message: "Foydalanuvchi malumotlari yangilandi",
-      data: updateUser,
+      message: "Foydalanuvchi yangilandi",
+      data: updatedUser,
     };
   };
 
   deleteUser = async (id) => {
     if (!isValidObjectId(id)) {
-      throw new BaseException(`ID: ${id} noto'g'ri kiritildi!`);
-    }
-    const user = await this.#_userModel.findById(id);
-    if (!user) {
-      throw new BaseException(`ID: ${id} boyicha malumot topilmadi`, 404);
+      throw new BaseException(`ID: ${id} noto‘g‘ri kiritildi!`);
     }
 
-    await this.#_userModel.findOneAndDelete(id);
-    return;
+    const deletedUser = await this.#_userModel.findByIdAndDelete(id);
+    if (!deletedUser) {
+      throw new BaseException(`ID: ${id} bo‘yicha foydalanuvchi topilmadi`, 404);
+    }
+
+    return {
+      message: "Foydalanuvchi o‘chirildi",
+    };
   };
 
   forgotPassword = async ({ email }) => {
     const user = await this.#_userModel.findOne({ email });
-
     if (!user) {
       throw new BaseException("Foydalanuvchi topilmadi", 404);
     }
 
-    const token = crypto.randomBytes(32).toString("hex");
-    user.token = token;
+    // Parol tiklash tokeni yaratish va bazaga saqlash (1 soat amal qiluvchi)
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    const resetTokenExpire = Date.now() + 3600000; // 1 soat
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpire = resetTokenExpire;
     await user.save();
 
-    const resetLink = `http://localhost:4000/pages/reset-password.html?token=${token}`;
+    // Emailga link yuborish
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}&email=${email}`;
+    const html = `<p>Parolingizni tiklash uchun quyidagi havolani bosing:</p><a href="${resetLink}">${resetLink}</a>`;
 
-    try {
-      await sendMail({
-        to: email,
-        subject: "Parolni tiklash",
-        html: `
-        <h2>Parolni tiklash uchun tugmani bosing</h2>
-        <a href="${resetLink}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">Reset Password</a>
-      `,
-      });
-    } catch (error) {
-      console.error("Email yuborishda xatolik:", error);
-      throw new BaseException(
-        "Email yuborilmadi. Iltimos keyinroq urinib ko‘ring",
-        500
-      );
-    }
+    await sendMail(email, "Parolni tiklash", html);
 
     return {
-      message: "Parolni tiklash havolasi emailingizga yuborildi ✅",
+      message: "Parolni tiklash uchun havola emailingizga yuborildi",
     };
   };
 
-  resetPassword = async ({ token, newPassword }) => {
-    const user = await this.#_userModel.findOne({ token });
+  resetPassword = async ({ email, token, newPassword }) => {
+    const user = await this.#_userModel.findOne({
+      email,
+      resetPasswordToken: token,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
 
     if (!user) {
-      throw new BaseException("Token noto‘g‘ri yoki eskirgan", 400);
+      throw new BaseException("Token noto‘g‘ri yoki muddati tugagan", 400);
     }
 
-    const hashedPassword = await hash(newPassword, 10);
-    user.password = hashedPassword;
-    user.token = undefined;
+    user.password = await hash(newPassword, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
 
     await user.save();
 
     return {
-      message: "Parolingiz muvaffaqiyatli yangilandi ✅",
+      message: "Parol muvaffaqiyatli yangilandi",
     };
   };
-   createSeedUser = async () => {
-    try {
-      const existingUser = await this.#_userModel.findOne({ email: "nurkenqaldybaev2001@gmail.com" });
-      if (existingUser) return;
-      
-      const passwordHash = await hash("123456", 10);
 
-      const seedUser = await this.#_userModel.create({
+  async createSeedUser() {
+    const adminExists = await this.#_userModel.findOne({ email: "nurkenqaldybaev2001@gmail.com" });
+    if (!adminExists) {
+      const hashedPassword = await hash("123456", 10);
+      await this.#_userModel.create({
         name: "Nurken",
         email: "nurkenqaldybaev2001@gmail.com",
-        password: passwordHash,
-        phoneNumber: "931231223",
+        password: hashedPassword,
         role: ROLES.ADMIN,
       });
-
-      console.log("Seed user yaratildi:", seedUser.email);
-    } catch (error) {
-      console.error("Seed user yaratishda xatolik:", error);
     }
-  };
+  }
 }
+
 export default new UserService();

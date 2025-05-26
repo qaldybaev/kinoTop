@@ -5,7 +5,6 @@ import {
   REFRESH_TOKEN_EXPIRE_TIME,
   REFRESH_TOKEN_SECRET,
 } from "../config/jwt.config.js";
-import { BaseException } from "../exception/base.exception.js";
 
 export const ProtectedMiddleware = (isProtected) => {
   return async (req, res, next) => {
@@ -18,9 +17,10 @@ export const ProtectedMiddleware = (isProtected) => {
     const refreshToken = req.cookies.refreshToken;
 
     if (!accessToken && !refreshToken) {
-      return next(new BaseException("Tokenlar mavjud emas!", 401));
+      return res.status(401).json({ message: "Tokenlar mavjud emas!" });
     }
 
+    // Access token yo'q, faqat refresh token bor bo'lsa
     if (!accessToken && refreshToken) {
       try {
         const data = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
@@ -43,27 +43,35 @@ export const ProtectedMiddleware = (isProtected) => {
           }
         );
 
+        // Cookie ni yangilab qo'yamiz
         res.cookie("accessToken", newAccessToken, {
-          maxAge: 1000 * 60 * 15,
+          maxAge: 1000 * 60 * 15, // 15 daqiqa
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Lax",
+          domain: ".webhero.com.uz",
+          path: "/",
         });
 
         res.cookie("refreshToken", newRefreshToken, {
-          maxAge: 1000 * 60 * 60 * 24 * 7,
+          maxAge: 1000 * 60 * 60 * 24 * 7, // 7 kun
           httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Lax",
+          domain: ".webhero.com.uz",
+          path: "/",
         });
 
         req.role = data.role;
         req.user = data.user;
-        console.log(req.role)
 
         return next();
       } catch (err) {
-        return next(
-          new BaseException("Refresh token noto'g'ri yoki eskirgan", 401)
-        );
+        return res.status(401).json({ message: "Refresh token noto'g'ri yoki eskirgan" });
       }
     }
 
+    // Access token bor bo'lsa
     try {
       const decodedData = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
 
@@ -73,17 +81,13 @@ export const ProtectedMiddleware = (isProtected) => {
       return next();
     } catch (err) {
       if (err instanceof jwt.TokenExpiredError) {
-        return next(new BaseException("Token muddati eskirgan", 406));
+        return res.status(406).json({ message: "Token muddati eskirgan" });
       } else if (err instanceof jwt.JsonWebTokenError) {
-        return next(
-          new BaseException("JWT token xato formatda yuborildi", 400)
-        );
+        return res.status(400).json({ message: "JWT token xato formatda yuborildi" });
       } else if (err instanceof jwt.NotBeforeError) {
-        return next(
-          new BaseException("Token hali ishlatilishi mumkin emas", 409)
-        );
+        return res.status(409).json({ message: "Token hali ishlatilishi mumkin emas" });
       } else {
-        next(err);
+        return res.status(500).json({ message: "Noma'lum xato yuz berdi" });
       }
     }
   };
