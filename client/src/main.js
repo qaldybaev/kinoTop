@@ -11,14 +11,14 @@ const sortSelect = document.querySelector("#sortSelect");
 
 let payload = null;
 
-// Cookie dan accessToken ni olish
+
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop().split(";").shift();
 }
 
-// JWT tokenni dekodlash
+
 function parseJwt(token) {
   try {
     console.log("token",token)
@@ -31,7 +31,7 @@ function parseJwt(token) {
   }
 }
 
-// Sahifa yuklanganda ishlaydi
+
 window.onload = () => {
   const accessToken = getCookie("accessToken");
   payload = parseJwt(accessToken);
